@@ -1,15 +1,34 @@
 <template>
     <div>
 <h1> Register </h1>
-<form>
-<input type="email" placeholder="Email">
-<input type="password" placeholder="Password">
-<button type="submit">Create user</button>
+<form @submit.prevent="handleSubmit">
+<input type="email" placeholder="Email" v-model="email">
+<input type="password" placeholder="Password" v-model="password">
+<button type="submit" :disabled="userStore.loadingUser" >Create user</button>
 </form>
 </div>
 </template>
 
-<script setup>
+<script setup> 
+import { async } from '@firebase/util';
+import { ref } from 'vue';
+import { useUserStore } from '../store/user';
+
+const userStore=useUserStore()
+    const email=ref("")
+    const password=ref("")
+    const handleSubmit=async()=>{
+       if(!email.value || password.value.length<6){
+    alert("Please,complete the fields")    
+    }
+    try{
+await userStore.registerUser(email.value,password.value)
+alert("Verify email")
+    }catch(error){
+        console.log(error)
+    }
+   
+    }
 
 </script>
 
