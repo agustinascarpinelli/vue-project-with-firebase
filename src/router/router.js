@@ -3,6 +3,10 @@ import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import { useUserStore } from '../store/user'
+import Edit from '../views/Edit.vue'
+import Profile from '../views/Profile.vue'
+import NotFound from '../views/NotFound.vue'
+import { useDataBaseStore } from '../store/database'
 
 const requireAuth=async(to,from,next)=>{
     const userStore=useUserStore()
@@ -17,10 +21,29 @@ const requireAuth=async(to,from,next)=>{
  }
 
 
+const redirect=async(to,from,next)=>{
+    const userStore=useDataBaseStore()
+    const database=useDataBaseStore()
+    userStore.loadingSession=true
+    const name = await database.getURL(to.params.pathMatch[0]);
+    if (!name) {
+        next();
+        userStore.loadingSession = false;
+    } else {
+        window.location.href = name;
+        userStore.loadingSession = true;
+        next();
+    }
+
+}
+
 const routes=[
-    {path:"/", component:Home, beforeEnter: requireAuth},
-    {path:"/login", component:Login},
-    {path:"/register", component:Register}
+    {path:"/", component:Home, beforeEnter: requireAuth,name:"home"},
+    {path:"/login", component:Login,name:"login"},
+    {path:"/register", component:Register,name:"register"},
+    {path:"/edit/:id",component:Edit,beforeEnter:requireAuth,name:"edit"},
+    {path:"/profile",component:Profile,beforeEnter:requireAuth,name:"profile"},
+    {path:"/:pathMatch(.*)*", component:NotFound,name:'redirect',beforeEnter:redirect}
 ]
 
 const router=createRouter({
