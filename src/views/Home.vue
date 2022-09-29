@@ -4,10 +4,17 @@
 <h2>Welcome {{userStore.userData?.displayName}}</h2>
 <AddForm></AddForm>
 <a-spin v-if="database.loading"></a-spin>
+<h2>Urls</h2>
+<a-input-search
+type="text"
+v-model:value="name"
+>
+
+</a-input-search>
 <a-space direction="vertical" style="width:100%">
-    <a-card v-for="item of database.documents" 
+    <a-card v-for="item of filter" 
     :key="item.id"
-    :title="item.short"
+    :title="item.alias"
     >
 <template #extra>
     <a-space>
@@ -23,13 +30,14 @@
         @confirm="confirm(item.id)"
         @cancel="cancel"
        >
+    </a-popconfirm>
         <a-button danger
         class="mr-1" >Delete</a-button>
         <a-button 
-        @click="copyUrl(item.id)"
+        @click="copyUrl(item.name)"
         
         >Copy</a-button>
-    </a-popconfirm>
+  
     </a-space>
 </template>
 <p>{{item.name}}</p>
@@ -42,11 +50,11 @@
 import { useUserStore } from '../store/user';
 import { useDataBaseStore } from '../store/database';
 import { useRouter } from 'vue-router';
-import {onBeforeMount} from 'vue'
+import {onBeforeMount,ref,watchEffect} from 'vue'
 import AddForm from '../components/AddForm.vue';
 import { message } from 'ant-design-vue';
-
-
+const filter=ref([])
+const name=ref("")
 const userStore=useUserStore()
 const database=useDataBaseStore()
 const router=useRouter()
@@ -61,11 +69,11 @@ const cancel=(e)=>{
     message.error("Url has not been deleted")
 }
 
-const copyUrl=async(id)=>{
+const copyUrl=async(url)=>{
 if(!navigator.clipboard){
     return message.error("Couldnt copy to clipboard")
 }
-const path=`${window.location.origin}/${id}`
+const path=url
 
 const res=await navigator.clipboard.writeText(path)
 if(!res){
@@ -76,8 +84,24 @@ else{
 }
 }
 
+
+watchEffect(()=>{
+    let inputName=name.value.toLowerCase()
+  
+   filter.value=database.documents.filter((doc)=>{
+   if( doc.alias.toLowerCase().includes(inputName))
+   return doc
+
+   })
+})
+
+
+
 onBeforeMount(async() => {
     await database.getUrls()
+    if (name.value===""){
+filter.value=database.documents
+    }
 })
 </script>
 

@@ -20,6 +20,13 @@ name="url"
 >
 <a-input v-model:value="formState.url"></a-input>
 </a-form-item>
+<a-form-item
+label="Enter a name"
+name="alias"
+
+>
+<a-input v-model:value="formState.alias"></a-input>
+</a-form-item>
 <a-form-item>
     <a-button
     type="primary"
@@ -40,11 +47,12 @@ import {regExpUrl} from '../utils/regExp'
 const database=useDataBaseStore()
 
 const formState=reactive({
-    url:""
+    url:"",
+    alias:""
 })
 
 const onFinish=async(values)=>{
-    const res=await database.addUrl(formState.url)
+    const res=await database.addUrl(formState.url,formState.alias)
 if(!res){
     return message.success("URL added")
 }

@@ -53,11 +53,12 @@ querySnapshot.forEach((doc)=>{
 
             }
         },
-        async addUrl(name){
+        async addUrl(name,alias){
             this.loadingDel=true
             try{
                 const docObj={
                     name:name,
+                    alias:alias,
                     short:nanoid(5),
                     user:auth.currentUser.uid
                 }

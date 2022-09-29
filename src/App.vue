@@ -21,6 +21,12 @@ watch(
         <a-menu-item v-if="userStore.userData" key="home">
           <router-link to="/">Home</router-link>
         </a-menu-item>
+        <a-menu-item v-if="userStore.userData" key="memegenerator">
+          <router-link to="/memegenerator">Generate a meme</router-link>
+        </a-menu-item>
+        <a-menu-item v-if="userStore.userData" key="memes">
+          <router-link to="/mymemes">My memes</router-link>
+        </a-menu-item>
         <a-menu-item v-if="!userStore.userData" key="login">
           <router-link to="/login">Login</router-link>
         </a-menu-item>
