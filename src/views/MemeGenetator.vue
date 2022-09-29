@@ -26,6 +26,12 @@
 >
 <a-input  v-model:value="formState.bottomText"></a-input>
 </a-form-item>
+<a-form-item 
+    label="Name"
+    name="name"
+>
+<a-input v-model:value="formState.name"></a-input>
+</a-form-item>
 <a-upload
 v-model:file-list="formState.fileList"
 list-type="picture"
@@ -71,7 +77,8 @@ const formState=reactive({
    topText:"",
    bottomText:"",
    fileList:[],
-   url:""
+   url:"",
+   name:""
 })
 
 const beforeUpload=(file)=>{
@@ -122,7 +129,7 @@ const handleChange=info=>{
 
 const onFinish=async()=>{
 if (formState.fileList[0]!==null){
-const res=await useMeme.createMeme(formState.topText,formState.bottomText,formState.fileList[0])
+const res=await useMeme.createMeme(formState.topText,formState.bottomText,formState.fileList[0],formState.name)
 
 if (!res){
     formState.url=useMeme.memeData

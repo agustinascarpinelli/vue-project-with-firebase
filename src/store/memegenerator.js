@@ -12,10 +12,11 @@ state:()=>({
     loadingMemes:false,
     download:false,
     url:' https://memebuild.com/api/1.0/generateMeme?api-key=f360d09efe975416652af893a2419d',
-    memes:[]
+    memes:[],
+    props:[]
 }),
 actions:{
-    async createMeme(topText,bottomText,img){
+    async createMeme(topText,bottomText,img,name){
  this.loadingMeme=true
  
     try{
@@ -35,7 +36,11 @@ actions:{
  if (response.status === 200) {
     let data = await response.json();
     this.memeData=data.url
+    let id=data.url.slice(49,-4)
+  let prop={id:id,name:name}
+  this.props=[...prop]
     
+ console.log(data)
 
 }else {
     throw 'Error fetching users list'
@@ -74,9 +79,22 @@ async getMemes(){
 const response=await fetch (url)
 if (response.status === 200) {
     let data = await response.json();
+   
 this.memes=[...data]
+this.memes.forEach((e)=>{
+    e.fav=false
+})
+this.memes.forEach((e)=>{
+    this.props.forEach((prop)=>{
+        if(prop.id===e.file){
+            e.name=prop.name
+        }
+    })
+})
 
 console.log(this.memes)
+console.log(this.props)
+
     
 
 }else {
